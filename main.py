@@ -1,41 +1,50 @@
-import datetime as dt
-import ipinfo
-import json
-import requests
-import yaml
+from WeatherReportEntity import WeatherReportEntity
+from WeatherService import WeatherService
+from Exceptions import *
 
 
-def get_initial_parameters() -> dict:
-    with open("properties.yaml", "r") as yaml_file:
-        try:
-            data = yaml.safe_load(yaml_file)
+def printWeatherReport(report: WeatherReportEntity):
+    print(f"Время: {report.date}\n" 
+      f"Местоположение: {report.location}\n" 
+      f"Температура: {report.temperature:.2f}°C\n" 
+      f"Ощущается как: {report.feels_like:.2f}°C\n"
+      f"Влажность: {report.humidity:.2f}%\n"
+      f"Скорость ветра: {report.wind_speed} м/c")
 
-            return data
-        except yaml.YAMLError as exc:
-            print("Ошибка при чтении YAML-файла:", exc)
 
-def get_city_by_ip(ip: str = '') -> str:
-    handler = ipinfo.getHandler(IP_INFO_API_KEY)
-    details = handler.getDetails(ip)
+def main():
+    service = WeatherService()
 
-    return details.all.get('city')
+    while True:
+        command = input().split()
 
-def get_celsius_from_response(response: json) -> float:
-    kelvin = response.get("main").get("temp")
-    return kelvin - 273.15
+        match command[0]:
+            case '-h':
+                print('help message placeholder')
+            case '-c':
+                print('closing programm')
+                break
+            case '-w':
+                if (len(command) > 1):
+                    try:
+
+                        report = service.get_weather_report(command[1])
+                        printWeatherReport(report)
+
+                    except CityNotFoundException:
+                        print('Given city not found, please try again.')
+                        continue
+                else:
+                    report = service.get_weather_report()
+                    printWeatherReport(report)
+            case _:
+                print('Unknown command, please try again or type -h for help.')
+
+
+
 
 
 if __name__ == "__main__":
-    data = get_initial_parameters()
+    main()
 
-    BASE_URL = data.get('openweathermap').get('base_url')
-    IP_INFO_API_KEY = data.get('ipinfo').get('api_key')
-    API_KEY_OPEN_WEATHER = data.get('openweathermap').get('api_key')
 
-    CITY = get_city_by_ip()
-
-    url = BASE_URL + '?' + "appid=" + API_KEY_OPEN_WEATHER + "&q=" + CITY
-    response = requests.get(url).json()
-
-    print(response)
-    print(get_celsius_from_response(response))
