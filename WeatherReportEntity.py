@@ -10,5 +10,5 @@ class WeatherReportEntity:
     wind_speed: int
     date: str
 
-    def convert_to_json(self):
+    def convert_to_json(self) -> dict:
         return asdict(self)

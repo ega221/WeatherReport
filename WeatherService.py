@@ -12,7 +12,7 @@ class WeatherService:
     _API_KEY_OPEN_WEATHER: str
     _BASE_URL: str
 
-    def __init__(self):
+    def __init__(self) -> None:
         data = self.__get_initial_parameters()
         self._BASE_URL = data.get('openweathermap').get('base_url')
         self._IP_INFO_API_KEY = data.get('ipinfo').get('api_key')
