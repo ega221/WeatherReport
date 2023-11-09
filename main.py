@@ -1,7 +1,7 @@
 from ReportRepository import ReportRepository
 from WeatherReportEntity import WeatherReportEntity
 from WeatherService import WeatherService
-from Exceptions import *
+from Exceptions import CityNotFoundException
 
 HELP_MESSAGE = '''Weather report - приложение для получения информации о погоде в текущий момент времени.
 Доступные команды:
