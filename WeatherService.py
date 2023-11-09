@@ -1,10 +1,10 @@
 import ipinfo
 import requests
 import yaml
+
 from WeatherReportEntity import WeatherReportEntity
 from datetime import datetime, timezone, timedelta
-
-from Exceptions import *
+from Exceptions import CityNotFoundException
 
 
 class WeatherService:

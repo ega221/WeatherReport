@@ -12,6 +12,8 @@ HELP_MESSAGE = '''Weather report - приложение для получени�
 4. -q - Закрывает программу и сохраняет историю.
 '''
 
+UNKNOWN_COMMAND_MESSAGE = 'Неизвестная команда, пожалуйста, попробуйте -help, чтобы вывести доступные команды.'
+
 
 def print_weather_report(report: WeatherReportEntity) -> None:
     print(f"Текущее время: {report.date.replace('UTC', '')}\n"
@@ -44,16 +46,29 @@ def main() -> None:
 
         match command[0]:
             case '-h':
-                print_history(repository)
+                if len(command) == 1:
+                    print_history(repository)
+                else:
+                    print(UNKNOWN_COMMAND_MESSAGE)
+
             case '-c':
-                repository.clear_reports()
-                print("История запросов очищена!")
+                if len(command) == 1:
+                    repository.clear_reports()
+                    print("История запросов очищена!")
+                else:
+                    print(UNKNOWN_COMMAND_MESSAGE)
             case '-help':
-                print(HELP_MESSAGE)
+                if len(command) == 1:
+                    print(HELP_MESSAGE)
+                else:
+                    print(UNKNOWN_COMMAND_MESSAGE)
             case '-q':
-                repository.save_to_json()
-                print('Завершение работы')
-                break
+                if len(command) == 1:
+                    repository.save_to_json()
+                    print('Завершение работы')
+                    break
+                else:
+                    print(UNKNOWN_COMMAND_MESSAGE)
             case '-w':
                 if len(command) > 1:
                     try:
@@ -70,7 +85,7 @@ def main() -> None:
                     repository.add_report(report)
                     print_weather_report(report)
             case _:
-                print('Неизвестная команда, пожалуйста, попробуйте -help, чтобы вывести доступные команды.')
+                print(UNKNOWN_COMMAND_MESSAGE)
 
 
 if __name__ == "__main__":
