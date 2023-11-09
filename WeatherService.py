@@ -2,7 +2,7 @@ import ipinfo
 import requests
 import yaml
 from WeatherReportEntity import WeatherReportEntity
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from Exceptions import *
 
@@ -37,19 +37,22 @@ class WeatherService:
         if not city:
             city = self.__get_city_by_ip()
 
-        url = self._BASE_URL + '?' + "appid=" + self._API_KEY_OPEN_WEATHER + "&q=" + city
+        url = self._BASE_URL + '?' + "appid=" + self._API_KEY_OPEN_WEATHER + "&q=" + city + '&lang=ru' + '&units=metric'
         response = requests.get(url)
 
         if response.status_code == 200:
 
             contents = response.json()
+            time_shift = contents.get("timezone")
+            time_zone = timezone(timedelta(seconds = time_shift))
             report = WeatherReportEntity(
                 location=city,
-                temperature=float(contents['main']['temp'] - 273.15),
-                feels_like=float(contents['main']['feels_like'] - 273.15),
+                condition=contents['weather'][0]['description'],
+                temperature=float(contents['main']['temp']),
+                feels_like=float(contents['main']['feels_like']),
                 humidity=contents['main']['humidity'],
                 wind_speed=contents['wind']['speed'],
-                date=datetime.now().strftime("%H:%M:%S %Y-%m-%d")
+                date=datetime.now(time_zone).strftime("%Y-%d-%m %H:%M:%S%Z")
             )
 
             return report

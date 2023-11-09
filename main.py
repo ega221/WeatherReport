@@ -12,17 +12,19 @@ HELP_MESSAGE = '''Weather report - приложение для получени�
 4. -q - Закрывает программу и сохраняет историю.
 '''
 
+
 def print_weather_report(report: WeatherReportEntity) -> None:
-    print(f"Время: {report.date}\n" 
-      f"Местоположение: {report.location}\n" 
-      f"Температура: {report.temperature:.2f}°C\n" 
-      f"Ощущается как: {report.feels_like:.2f}°C\n"
-      f"Влажность: {report.humidity:.2f}%\n"
-      f"Скорость ветра: {report.wind_speed} м/c")
+    print(f"Текущее время: {report.date.replace('UTC', '')}\n"
+          f"Название города: {report.location}\n"
+          f"Погодные условия: {report.condition}\n"
+          f"Текущая температура: {report.temperature:.0f} градусов по цельсию\n"
+          f"Ощущается как: {report.feels_like:.0f} градусов по цельсию\n"
+          f"Скорость ветра: {report.wind_speed} м/c")
+
 
 def print_history(repository: ReportRepository) -> None:
     reports = repository.get_reports()
-    if (len(reports) == 0):
+    if len(reports) == 0:
         print("История запросов пуста.")
     else:
         print('--------- ИСТОРИЯ ЗАПРОСОВ ---------')
@@ -53,7 +55,7 @@ def main() -> None:
                 print('Завершение работы')
                 break
             case '-w':
-                if (len(command) > 1):
+                if len(command) > 1:
                     try:
 
                         report = service.get_weather_report(command[1])
@@ -71,10 +73,5 @@ def main() -> None:
                 print('Неизвестная команда, пожалуйста, попробуйте -help, чтобы вывести доступные команды.')
 
 
-
-
-
 if __name__ == "__main__":
     main()
-
-

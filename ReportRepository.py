@@ -14,7 +14,7 @@ class ReportRepository:
 
     def add_report(self, report: WeatherReportEntity) -> None:
         if len(self.reports) >= 10:
-            self.reports.pop(0)  # Deleting the oldest report
+            self.reports.pop(0)
         self.reports.append(report)
 
     def save_to_json(self) -> None:

@@ -4,6 +4,7 @@ from dataclasses import dataclass, asdict
 @dataclass(order=True)
 class WeatherReportEntity:
     location: str
+    condition: str
     temperature: float
     feels_like: float
     humidity: int
