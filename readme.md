@@ -36,7 +36,7 @@ ipinfo:
   api_key: {ipinfo_api_token}
 ```
 И добавить его в корень проекта.
-Далее установить небоходимые зависимости:
-pip install -r requirements.txt
-Запустить программу:
-python main.py
+- Создать окружение: python -m venv \<venv_name\>
+- Запустить: Для windows: \<venv_name\>/Scripts/activate; Для unix: source \<venv_name\>/bin/activate
+- Далее установить небоходимые зависимости: pip install -r requirements.txt
+- Запустить программу: python main.py
