@@ -1,7 +1,7 @@
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 
 
-@dataclass(order=True)
+@dataclass
 class WeatherReportEntity:
     location: str
     condition: str
