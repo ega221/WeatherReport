@@ -5,36 +5,43 @@ from weather_report_entity import WeatherReportEntity
 
 class ReportRepository:
     def __init__(self, file_name: str = ".history.json") -> None:
-        self.reports: list[WeatherReportEntity] = []
         self._file_name = file_name
-        self.__load_from_json()
 
     def add_report(self, report: WeatherReportEntity) -> None:
-        if len(self.reports) >= 10:
-            self.reports.pop(0)
-        self.reports.append(report)
+        try:
+            with open(self._file_name, "r") as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = []
 
-    def save_to_json(self) -> None:
-        data = [report.convert_to_json() for report in self.reports]
+        data.append(report.convert_to_json())
+
         with open(self._file_name, "w") as file:
             json.dump(data, file)
 
-    def clear_reports(self) -> None:
-        self.reports = []
 
-    def __load_from_json(self) -> None:
+    def save_to_json(self) -> None:
+        data = [report.convert_to_json() for report in self.reports]
+        with open(self._file_name, "a") as file:
+            json.dump(data, file)
+
+    def clear_reports(self) -> None:
+        data = []
+        with open(self._file_name, "w") as file:
+            json.dump(data, file)
+
+    def load_from_json(self, n: int = 10) -> list[WeatherReportEntity] | None:
         try:
             with open(self._file_name) as f:
                 data = json.load(f)
-                self.reports = [WeatherReportEntity(**report) for report in data[-10:]]
+                reports = [WeatherReportEntity(**report) for report in data[-n:]]
+                reports.reverse()
         except FileNotFoundError:
-            print("Файл истории не найден, будет создан новый")
-            return
+            print("Файл истории не найден.")
+            return []
         except (TypeError, json.JSONDecodeError):
-            print("Файл истории повреждён, будет создан новый")
-            return
+            self.clear_reports()
+            print("Файл истории повреждён, история очищена.")
+            return []
 
-        if len(self.reports) == 0:
-            print("Файл истории найден, история запросов пуста.")
-        else:
-            print("Файл истории найден, история последних запросов загружена")
+        return reports
