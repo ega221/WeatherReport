@@ -7,7 +7,7 @@ HELP_MESSAGE = """Weather report - приложение для получени�
 Доступные команды:
 1. -w {location}: - Дает информацию о погоде в населённом пункте или городе. Если не передавать параметр, то будет взято
         местположение пользователя.
-2. -h - Показывает последние 10 запросов.
+2. -h {n} - Показывает последние n запросов, если параметр не дан, то выводятся 10 последних запросов.
 3. -c - Очищает историю.
 4. -q - Закрывает программу и сохраняет историю.
 """
@@ -26,8 +26,8 @@ def print_weather_report(report: WeatherReportEntity) -> None:
     )
 
 
-def print_history(repository: ReportRepository) -> None:
-    reports = repository.reports
+def print_history(repository: ReportRepository, n: int = 10) -> None:
+    reports = repository.load_from_json(n)
     if len(reports) == 0:
         print("История запросов пуста.")
     else:
@@ -44,11 +44,16 @@ def main() -> None:
     repository = ReportRepository()
 
     while True:
-        command = input().split(" ", 1)
+        command = input().strip().split(" ", 1)
 
         match command[0]:
             case "-h":
-                if len(command) == 1:
+                if len(command) > 1:
+                    try:
+                        print_history(repository, int(command[1]))
+                    except ValueError:
+                        print(UNKNOWN_COMMAND_MESSAGE)
+                elif len(command) == 1:
                     print_history(repository)
                 else:
                     print(UNKNOWN_COMMAND_MESSAGE)
@@ -65,7 +70,6 @@ def main() -> None:
                     print(UNKNOWN_COMMAND_MESSAGE)
             case "-q":
                 if len(command) == 1:
-                    repository.save_to_json()
                     print("Завершение работы")
                     break
                 else:
