@@ -4,8 +4,6 @@ from weather_report_entity import WeatherReportEntity
 
 
 class ReportRepository:
-    # ToDo: Переписать логику на аппенды
-    # Разделить history и reports
     def __init__(self, file_name: str = ".history.json") -> None:
         self._file_name = file_name
 
